@@ -1,20 +1,23 @@
+require('dotenv').config();
+
 import express from 'express';
 import jwt from 'jsonwebtoken';
 
-import authConfig from './config/auth.json';
 import authMiddleware from './middlewares/auth';
 
 const app = express();
 const port = process.env.PORT || 3333;
 
 const login = {
-  id: 1,
-  user: 'admin',
-  senha: 'tbj15376ale'
+  id: process.env.ID,
+  user: String(process.env.USERNAME),
+  senha: String(process.env.PASSWORD)
 }
 
+const secret = String(process.env.SECRET);
+
 function generateToken(params = {}) {
-  return jwt.sign({ id: login.id }, authConfig.secret, {
+  return jwt.sign({ id: login.id }, secret, {
     expiresIn: 86400
   })
 }

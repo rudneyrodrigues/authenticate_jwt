@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-import authConfig from '../config/auth.json';
+const secret = String(process.env.SECRET);
 
 export default (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
@@ -24,9 +24,14 @@ export default (req: Request, res: Response, next: NextFunction) => {
     return res.status(401).json({ error: 'Token malformatted'})
   }
 
-  jwt.verify(token, authConfig.secret, (err, decoded) => {
+  jwt.verify(token, secret, (err, decoded) => {
     if (err) {
-      return res.status(401).json({ error: 'Token invalid'})
+      return res.status(401).json({
+        error: 'Token invalid',
+        token: token,
+        secret: secret,
+        authHeader: authHeader
+      });
     }
 
     return next();
